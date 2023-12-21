@@ -181,8 +181,8 @@ def multioutput_fscore(y_true, y_pred, beta=1):
 
     f1score_list = []
     for column in range(0, y_true.shape[1]):
-        score = fbeta_score(y_true[:, column],
-                            y_pred[:, column], beta, average='weighted')
+        score = fbeta_score(
+            y_true[:, column], y_pred[:, column], beta=1, average='weighted')
         f1score_list.append(score)
 
     f1score = np.asarray(f1score_list)
@@ -268,6 +268,7 @@ def main():
         print('Trained model saved!')
 
     else:
+        print(sys.argv)
         print("Please provide the arguments correctly: \nSample Script Execution:\n\
 > python train_classifier.py ../data/disaster_response_db.db classifier.pkl \n\
 Arguments Description: \n\
