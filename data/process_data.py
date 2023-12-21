@@ -42,8 +42,15 @@ def clean_categories_data(df):
     categories.columns = category_colnames
 
     for column in categories:
+        # set each value to be the last character of the string
         categories[column] = categories[column].str[-1]
+
+        # convert column from string to numeric
         categories[column] = categories[column].astype(np.int)
+
+        # if column is 'related', replace 2 with 1
+        if column == 'related':
+            categories[column] = categories[column].replace(2, 1)
 
     df = df.drop('categories', axis=1)
     df = pd.concat([df, categories], axis=1)
