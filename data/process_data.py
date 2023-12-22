@@ -46,7 +46,8 @@ def clean_categories_data(df):
         categories[column] = categories[column].str[-1]
 
         # convert column from string to numeric
-        categories[column] = categories[column].astype(np.int)
+        categories[column] = categories[column].astype(
+            int)  # or np.int64 or np.int32
 
         # if column is 'related', replace 2 with 1
         if column == 'related':
@@ -69,8 +70,8 @@ def save_data_to_db(df, database_filename):
     """
 
     engine = create_engine('sqlite:///' + database_filename)
-    table_name = database_filename.replace(".db", "") + "_table"
-    df.to_sql(table_name, engine, index=False, if_exists='replace')
+    df.to_sql('DisasterResponse_table', engine,
+              index=False, if_exists='replace')
 
 
 def main():

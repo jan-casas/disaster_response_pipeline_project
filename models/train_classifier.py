@@ -43,9 +43,7 @@ def load_data_from_db(database_filepath):
     """
 
     engine = create_engine('sqlite:///' + database_filepath)
-    table_name = os.path.basename(
-        database_filepath).replace(".db", "") + "_table"
-    df = pd.read_sql_table(table_name, engine)
+    df = pd.read_sql_table('DisasterResponse_table', engine)
 
     # Remove child alone as it has all zeros only
     df = df.drop(['child_alone'], axis=1)
