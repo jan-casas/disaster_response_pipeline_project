@@ -122,17 +122,9 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         return pd.DataFrame(X_tagged)
 
 
-def build_pipeline():
-    """
-    Build Pipeline function
-
-    Output:
-        A Scikit ML Pipeline that process text messages and apply a classifier.
-
-    """
+def build_model():
     pipeline = Pipeline([
         ('features', FeatureUnion([
-
             ('text_pipeline', Pipeline([
                 ('count_vectorizer', CountVectorizer(tokenizer=tokenize)),
                 ('tfidf_transformer', TfidfTransformer())
@@ -144,7 +136,20 @@ def build_pipeline():
         ('classifier', MultiOutputClassifier(AdaBoostClassifier()))
     ])
 
-    return pipeline
+    # Define the parameter grid
+    param_grid = {
+        'features__text_pipeline__count_vectorizer__ngram_range': [(1, 1), (1, 2)],
+        'features__text_pipeline__count_vectorizer__max_df': [0.5, 1.0],
+        'features__text_pipeline__count_vectorizer__max_features': [None, 5000],
+        'features__text_pipeline__tfidf_transformer__use_idf': [True, False],
+        'classifier__estimator__n_estimators': [50, 100],
+        'classifier__estimator__learning_rate': [0.01, 0.1]
+    }
+
+    # Instantiate GridSearchCV
+    cv = GridSearchCV(pipeline, param_grid, cv=3)
+
+    return cv
 
 
 def multioutput_fscore(y_true, y_pred, beta=1):
@@ -254,7 +259,7 @@ def main():
             X, Y, test_size=0.2)
 
         print('Building the pipeline ...')
-        pipeline = build_pipeline()
+        pipeline = build_model()
 
         print('Training the pipeline ...')
         pipeline.fit(X_train, Y_train)
